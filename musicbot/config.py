@@ -77,6 +77,7 @@ class Config:
         self.legacy_skip = config.getboolean('MusicBot', 'LegacySkip', fallback=ConfigDefaults.legacy_skip)
         self.leavenonowners = config.getboolean('MusicBot', 'LeaveServersWithoutOwner', fallback=ConfigDefaults.leavenonowners)
         self.usealias = config.getboolean('MusicBot', 'UseAlias', fallback=ConfigDefaults.usealias)
+        self.loudnorm = config.getboolean('MusicBot', 'LoudNormalize', fallback=ConfigDefaults.usealias)
         self.footer_text = config.get('MusicBot', 'CustomEmbedFooter', fallback=ConfigDefaults.footer_text)
 
         self.debug_level = config.get('MusicBot', 'DebugLevel', fallback=ConfigDefaults.debug_level)
@@ -198,13 +199,17 @@ class Config:
                 self.nowplaying_channels = set(int(x) for x in self.nowplaying_channels.replace(',', ' ').split() if x)
             except:
                 log.warning("NowPlayingChannels data is invalid, will use the default behavior for all servers")
-                self.nowplaying_channels = set()
+                self.autojoin_channels = set()
 
         self._spotify = False
         if self.spotify_clientid and self.spotify_clientsecret:
             self._spotify = True
 
         self.delete_invoking = self.delete_invoking and self.delete_messages
+
+        self.bound_channels = set(int(item) for item in self.bound_channels)
+
+        self.autojoin_channels = set(int(item) for item in self.autojoin_channels)
 
         ap_path, ap_name = os.path.split(self.auto_playlist_file)
         apn_name, apn_ext = os.path.splitext(ap_name)

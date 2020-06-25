@@ -1336,13 +1336,16 @@ class MusicBot(discord.Client):
         if leftover_args:
             song_url = ' '.join([song_url, *leftover_args])
         leftover_args = None  # prevent some crazy shit happening down the line
-
+        # nico
+        linksRegex = '((sm)\d{1,12})'
+        pattern = re.compile(linksRegex)
+        matchUrl = pattern.match(song_url)
+        song_url = ("https://www.nicovideo.jp/watch/"+song_url).replace('/', '%2F') if matchUrl is None else song_url
         # Make sure forward slashes work properly in search queries
         linksRegex = '((http(s)*:[/][/]|www.)([a-z]|[A-Z]|[0-9]|[/.]|[~])*)'
         pattern = re.compile(linksRegex)
         matchUrl = pattern.match(song_url)
         song_url = song_url.replace('/', '%2F') if matchUrl is None else song_url
-
         # Rewrite YouTube playlist URLs if the wrong URL type is given
         playlistRegex = r'watch\?v=.+&(list=[^&]+)'
         matches = re.search(playlistRegex, song_url)
@@ -1395,7 +1398,7 @@ class MusicBot(discord.Client):
                         raise exceptions.CommandError(self.str.get('cmd-play-spotify-unsupported', 'That is not a supported Spotify URI.'), expire_in=30)
                 except exceptions.SpotifyError:
                     raise exceptions.CommandError(self.str.get('cmd-play-spotify-invalid', 'You either provided an invalid URI, or there was a problem.'))
-
+        
         async def get_info(song_url):
             info = await self.downloader.extract_info(player.playlist.loop, song_url, download=False, process=False)
             # If there is an exception arise when processing we go on and let extract_info down the line report it
@@ -1869,7 +1872,7 @@ class MusicBot(discord.Client):
                 if (percentage < 1 / progress_bar_length * i):
                     prog_bar_str += '□'
                 else:
-                    prog_bar_str += '■'
+                    prog_bar_str += '�'
 
             action_text = self.str.get('cmd-np-action-streaming', 'Streaming') if streaming else self.str.get('cmd-np-action-playing', 'Playing')
 
