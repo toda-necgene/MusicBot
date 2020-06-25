@@ -290,7 +290,7 @@ class MusicPlayer(EventEmitter, Serializable):
                 else:
                     aoptions = "-vn"
                 if self.bot.config.loudnorm:
-                    aoptions += "-filter:a loadnorm"
+                    aoptions += " -filter:a loadnorm"
                 
                 log.ffmpeg("Creating player with options: {} {} {}".format(boptions, aoptions, entry.filename))
 
