@@ -2597,7 +2597,7 @@ class MusicBot(discord.Client):
         """
         self.author_limit = mode
         self.author_list = []
-        raise Response("Limited mode set to `%s` and limited user-list cleared.".format(mode), delete_after=20)
+        return Response("Limited mode set to `%s` and limited user-list cleared.".format(mode), delete_after=20)
 
         
     async def cmd_leaveserver(self, val, leftover_args):
