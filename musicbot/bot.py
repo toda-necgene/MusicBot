@@ -499,8 +499,8 @@ class MusicBot(discord.Client):
             else:
                 newmsg = 'Now playing in `%s`: `%s` added by `%s`' % (
                     player.voice_client.channel.name, entry.title, entry.meta['author'].name)
-            if author_limit:
-                author_list.remove(entry.meta['author'])
+            if self.author_limit:
+                self.author_list.remove(entry.meta['author'])
         else:
             # no author (and channel), it's an autoplaylist (or autostream from my other PR) entry.
             newmsg = 'Now playing automatically added entry `%s` in `%s`' % (
