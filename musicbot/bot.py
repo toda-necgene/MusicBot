@@ -1322,13 +1322,16 @@ class MusicBot(discord.Client):
         if leftover_args:
             song_url = ' '.join([song_url, *leftover_args])
         leftover_args = None  # prevent some crazy shit happening down the line
-
+        # nico
+        linksRegex = '((sm)\d{1,12})'
+        pattern = re.compile(linksRegex)
+        matchUrl = pattern.match(song_url)
+        song_url = ("https://www.nicovideo.jp/watch/"+song_url).replace('/', '%2F') if matchUrl is None else song_url
         # Make sure forward slashes work properly in search queries
         linksRegex = '((http(s)*:[/][/]|www.)([a-z]|[A-Z]|[0-9]|[/.]|[~])*)'
         pattern = re.compile(linksRegex)
         matchUrl = pattern.match(song_url)
         song_url = song_url.replace('/', '%2F') if matchUrl is None else song_url
-
         # Rewrite YouTube playlist URLs if the wrong URL type is given
         playlistRegex = r'watch\?v=.+&(list=[^&]+)'
         matches = re.search(playlistRegex, song_url)
@@ -1381,7 +1384,7 @@ class MusicBot(discord.Client):
                         raise exceptions.CommandError(self.str.get('cmd-play-spotify-unsupported', 'That is not a supported Spotify URI.'), expire_in=30)
                 except exceptions.SpotifyError:
                     raise exceptions.CommandError(self.str.get('cmd-play-spotify-invalid', 'You either provided an invalid URI, or there was a problem.'))
-
+        
         # This lock prevent spamming play command to add entries that exceeds time limit/ maximum song limit
         async with self.aiolocks[_func_() + ':' + str(author.id)]:
             if permissions.max_songs and player.playlist.count_for_user(author) >= permissions.max_songs:
