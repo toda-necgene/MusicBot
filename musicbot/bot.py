@@ -71,6 +71,8 @@ class MusicBot(discord.Client):
         self.cached_app_info = None
         self.last_status = None
 
+        self.author_list = []
+        self.autho_limit = False
         self.config = Config(config_file)
         
         self._setup_logging()
@@ -483,6 +485,8 @@ class MusicBot(discord.Client):
             else:
                 newmsg = 'Now playing in `%s`: `%s` added by `%s`' % (
                     player.voice_client.channel.name, entry.title, entry.meta['author'].name)
+            if author_limit:
+                author_list.remove(entry.meta['author'])
         else:
             # no author (and channel), it's an autoplaylist (or autostream from my other PR) entry.
             newmsg = 'Now playing automatically added entry `%s` in `%s`' % (
@@ -1314,6 +1318,9 @@ class MusicBot(discord.Client):
         it will use the metadata (e.g song name and artist) to find a YouTube
         equivalent of the song. Streaming from Spotify is not possible.
         """
+        if self.author_limit:
+            if author in self.author_list:
+                raise exceptions.CommandError("Limited mode enabled ! You've entried songs already. please wait for your entry be over.", expire_in=30)
 
         song_url = song_url.strip('<>')
 
@@ -1562,6 +1569,8 @@ class MusicBot(discord.Client):
                 entry, position = await player.playlist.add_entry(song_url, channel=channel, author=author)
 
                 reply_text = self.str.get('cmd-play-song-reply', "Enqueued `%s` to be played. Position in queue: %s")
+                if self.author_limit:
+                    self.author_list.append(author)
                 btext = entry.title
 
             if position == 1 and player.is_stopped:
@@ -2569,6 +2578,18 @@ class MusicBot(discord.Client):
         await self.disconnect_all_voice_clients()
         raise exceptions.TerminateSignal()
 
+    async def cmd_limitation(self, mode):
+        """
+        Usage:
+            {command_prefix}shutdown
+        
+        Disconnects from voice channels and closes the bot process.
+        """
+        self.author_limit = mode
+        self.author_list = []
+        raise await Response("Limited mode set to `{%s}` and limited user-list cleared.".format(guild), delete_after=20)
+
+        
     async def cmd_leaveserver(self, val, leftover_args):
         """
         Usage:
