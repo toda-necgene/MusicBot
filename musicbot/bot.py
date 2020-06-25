@@ -72,7 +72,7 @@ class MusicBot(discord.Client):
         self.last_status = None
 
         self.author_list = []
-        self.autho_limit = False
+        self.author_limit = False
         self.config = Config(config_file)
         
         self._setup_logging()
