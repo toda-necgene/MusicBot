@@ -1338,7 +1338,7 @@ class MusicBot(discord.Client):
         leftover_args = None  # prevent some crazy shit happening down the line
         # nico
         if song_url.startswith("sm"):
-            song_url = ("https://www.nicovideo.jp/watch/"+song_url) if matchUrl  else song_url
+            song_url = ("https://www.nicovideo.jp/watch/" + song_url)
         # Make sure forward slashes work properly in search queries
         linksRegex = '((http(s)*:[/][/]|www.)([a-z]|[A-Z]|[0-9]|[/.]|[~])*)'
         pattern = re.compile(linksRegex)
