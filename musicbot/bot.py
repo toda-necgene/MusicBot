@@ -485,7 +485,7 @@ class MusicBot(discord.Client):
             else:
                 newmsg = 'Now playing in `%s`: `%s` added by `%s`' % (
                     player.voice_client.channel.name, entry.title, entry.meta['author'].name)
-            if self.author_limit:
+            if self.author_limit and entry.meta['author'] in author:
                 self.author_list.remove(entry.meta['author'])
         else:
             # no author (and channel), it's an autoplaylist (or autostream from my other PR) entry.
@@ -1446,6 +1446,7 @@ class MusicBot(discord.Client):
 
             # abstract the search handling away from the user
             # our ytdl options allow us to use search strings as input urls
+            """
             if info.get('url', '').startswith('ytsearch'):
                 # print("[Command:play] Searching for \"%s\"" % song_url)
                 info = await self.downloader.extract_info(
@@ -1460,8 +1461,8 @@ class MusicBot(discord.Client):
 
                 if not info:
                     raise exceptions.CommandError(
-                        self.str.get('cmd-play-nodata', "Error extracting info from search string, youtubedl returned no data. "
-                                                        "You may need to restart the bot if this continues to happen."), expire_in=30
+                        self.str.get('cmd-play-nodata', "この動画は再生できません. "
+                                                        "動画形式がおかしいかバグですね."), expire_in=30
                     )
 
                 if not all(info.get('entries', [])):
@@ -1474,6 +1475,10 @@ class MusicBot(discord.Client):
                 info = await self.downloader.extract_info(player.playlist.loop, song_url, download=False, process=False)
                 # Now I could just do: return await self.cmd_play(player, channel, author, song_url)
                 # But this is probably fine
+            """
+            if info.get('url', '').startswith('ytsearch'):
+                log.error("Error queuing playlist", exc_info=True)
+                raise exceptions.CommandError(self.str.get('cmd-play-error', "動画URLを張ってください。:\n`{0}`"), expire_in=30)
 
             # If it's playlist
             if 'entries' in info:
@@ -1573,7 +1578,7 @@ class MusicBot(discord.Client):
                 btext = entry.title
 
             if position == 1 and player.is_stopped:
-                position = self.str.get('cmd-play-next', '次は：'')
+                position = self.str.get('cmd-play-next', '次は：')
                 reply_text %= (btext, position)
 
             else:
