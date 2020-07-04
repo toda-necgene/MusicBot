@@ -1713,7 +1713,7 @@ class MusicBot(discord.Client):
         await self.send_typing(channel)
         await player.playlist.add_stream_entry(song_url, channel=channel, author=author)
 
-        return Response(self.str.get('cmd-stream-success', "ストリーミング！！"."), delete_after=6)
+        return Response(self.str.get('cmd-stream-success', "ストリーミング！！"), delete_after=6)
 
     async def cmd_search(self, message, player, channel, author, permissions, leftover_args):
         """
