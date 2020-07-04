@@ -55,7 +55,7 @@ class Downloader:
     def ytdl(self):
         return self.safe_ytdl
 
-    async def extract_info(self, loop, *args, on_error=None, retry_on_error=True, **kwargs):
+    async def extract_info(self, loop, *args, on_error=None, retry_on_error=False, **kwargs):
         """
             Runs ytdl.extract_info within the threadpool. Returns a future that will fire when it's done.
             If `on_error` is passed and an exception is raised, the exception will be caught and passed to
